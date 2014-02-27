@@ -2,6 +2,7 @@
     width: 30px;
     height: 30px;
     background-color: white;
+    cursor: pointer;
 }
 
 .board-row {
@@ -9,12 +10,16 @@
     height: 30px;
 }
 
+.clicked {
+    border: solid red;
+}
+
 .D1{
     background-color: red;
 }
 
 .D2{
-    background-color: blue;
+    background-color: pink;
 }
 
 .D3{

@@ -68,6 +68,7 @@ function BoardClass(params) {
 
                 var tdHtmlElement = $("<td/>", {
                     class: "board-cell " + randomDiamond.cssClass,
+                    id: "cell_" + i + "_" + j,
                     text: randomDiamond.type
                 });
 
@@ -80,26 +81,69 @@ function BoardClass(params) {
             tableElement.append(trHtmlElement);
             this.elements.push(row);
         }
-console.log(this.elements);
+//console.log(this.elements);
+    };
+    
+    this.checkForCombos = function() {
+      var combos = [];
+      for(var i = 0; i<15; i++) {
+          for(var j=0; j<15; j++){
+            var diamond = this.elements[i][j].diamondType;
+            var check = true;
+            var counter = 1;
+            var coordinates = [];
+            var diamontPoint = {
+                x: i,
+                y: j
+            };
+            coordinates.push(diamontPoint);
+            while (check && j + counter < 15) {
+                var compare = this.elements[i][j + counter].diamondType;
+                if (diamond === compare) {
+                    diamontPoint = {
+                        x: i,
+                        y: j + counter
+                    };
+                    coordinates.push(diamontPoint);
+                    counter++;
+                }
+                else {
+                    check = false;
+                }
+            }
+            if (counter > 2) {
+                var diamondCombo = {
+                    diamondType: diamond.type,
+                    diamondCount: counter,
+                    comboCoordinates: coordinates
+                };
+                combos.push(diamondCombo);
+            }
 
+            if (counter > 1) {
+                j += counter - 1;
+            }
+          }
+      }
+      return combos;
     };
 
     $('#change').click(function() {
-        var firstX = $("input[name=firstX]").val();
-        var firstY = $("input[name=firstY]").val();
+        var firstX = $("input[name='firstX']").val();
+        var firstY = $("input[name='firstY']").val();
 
-        var secondX = $("input[name=secondX]").val();
-        var secondY = $("input[name=secondY]").val();
+        var secondX = $("input[name='secondX']").val();
+        var secondY = $("input[name='secondY']").val();
 
-  /*      var temp = this.elements[firstX][firstY].diamondType;
+        var temp = this.elements[firstX][firstY].diamondType;
         this.elements[firstX][firstY].diamondType = this.elements[secondX][secondY].diamondType;
         this.assignDiamondToBoardElement(firstX, firstY, this.elements[firstX][firstY].diamondType);
         this.elements[secondX][secondY].diamondType = temp;
-        this.assignDiamondToBoardElement(secondX, secondY, this.elements[secondX][secondY].diamondType);*/
+        this.assignDiamondToBoardElement(secondX, secondY, this.elements[secondX][secondY].diamondType);
 
     });
 
-  /*  this.assignDiamondToBoardElement = function(rowIndex, colIndex, diamondType) {
+    this.assignDiamondToBoardElement = function(rowIndex, colIndex, diamondType) {
         var boardElement = this.elements[rowIndex][colIndex];
         boardElement.diamondType = diamondType;
         if (diamondType !== null) {
@@ -110,6 +154,5 @@ console.log(this.elements);
             boardElement.htmlElement.removeClass().addClass("board-diamond empty")
                     .text("");
         }
-    };*/
-}
-;
+    };
+};
