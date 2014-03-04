@@ -205,7 +205,7 @@ function BoardClass(params) {
             }
         }
         
-        console.log(emptyDiamonds.length !== 0);
+        //console.log(emptyDiamonds.length !== 0);
         return emptyDiamonds.length !== 0;
     };
     
