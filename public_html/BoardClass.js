@@ -48,6 +48,10 @@ function BoardClass(params) {
     DiamondsTypes.push(Diamond4);
     DiamondsTypes.push(Diamond5);
 
+    /*
+     * generowanie losowej mapy z diamentami
+     * @returns {undefined}
+     */
     this.createMap = function() {
 
         var tableElement = $("<table/>", {
@@ -81,59 +85,63 @@ function BoardClass(params) {
             tableElement.append(trHtmlElement);
             this.elements.push(row);
         }
-//console.log(this.elements);
     };
-    
+    /*
+     * wyszukiwanie tylko POZIOMYCH grup diamentów (grupa = >2)
+     * @returns {Array|BoardClass.checkForCombos.combos}
+     */
     this.checkForCombos = function() {
-      var combos = [];
-      for(var i = 0; i<15; i++) {
-          for(var j=0; j<15; j++){
-            var diamond = this.elements[i][j].diamondType;
-            var check = true;
-            var counter = 1;
-            var coordinates = [];
-            var diamontPoint = {
-                x: i,
-                y: j
-            };
-            coordinates.push(diamontPoint);
-            while (check && j + counter < 15) {
-                var compare = this.elements[i][j + counter].diamondType;
-                if (diamond === compare) {
-                    diamontPoint = {
-                        x: i,
-                        y: j + counter
-                    };
-                    coordinates.push(diamontPoint);
-                    counter++;
-                }
-                else {
-                    check = false;
-                }
-            }
-            if (counter > 2) {
-                var diamondCombo = {
-                    diamondType: diamond.type,
-                    diamondCount: counter,
-                    comboCoordinates: coordinates
+        var combos = [];
+        for (var i = 0; i < 15; i++) {
+            for (var j = 0; j < 15; j++) {
+                var diamond = this.elements[i][j].diamondType;
+                var check = true;
+                var counter = 1;
+                var coordinates = [];
+                var diamontPoint = {
+                    x: i,
+                    y: j
                 };
-                combos.push(diamondCombo);
-            }
+                coordinates.push(diamontPoint);
+                while (check && j + counter < 15) {
+                    var compare = this.elements[i][j + counter].diamondType;
+                    if (diamond === compare) {
+                        diamontPoint = {
+                            x: i,
+                            y: j + counter
+                        };
+                        coordinates.push(diamontPoint);
+                        counter++;
+                    }
+                    else {
+                        check = false;
+                    }
+                }
+                if (counter > 2) {
+                    var diamondCombo = {
+                        diamondType: diamond.type,
+                        diamondCount: counter,
+                        comboCoordinates: coordinates
+                    };
+                    combos.push(diamondCombo);
+                }
 
-            if (counter > 1) {
-                j += counter - 1;
+                if (counter > 1) {
+                    j += counter - 1;
+                }
             }
-          }
-      }
-      return combos;
+        }
+        return combos;
     };
-
-    $('#change').click(function() {
-        var firstX = $("input[name='firstX']").val();
-        var firstY = $("input[name='firstY']").val();
-
-        var secondX = $("input[name='secondX']").val();
-        var secondY = $("input[name='secondY']").val();
+    /*
+     * zamiana 2ch diamentów miejscami z zainputowanymi coorinatesami tych diamentów
+     * @param {type} firstX
+     * @param {type} firstY
+     * @param {type} secondX
+     * @param {type} secondY
+     * @returns {undefined}
+     */
+    this.changeDiamondPlaces = function(firstX, firstY, secondX, secondY) {
 
         var temp = this.elements[firstX][firstY].diamondType;
         this.elements[firstX][firstY].diamondType = this.elements[secondX][secondY].diamondType;
@@ -141,18 +149,81 @@ function BoardClass(params) {
         this.elements[secondX][secondY].diamondType = temp;
         this.assignDiamondToBoardElement(secondX, secondY, this.elements[secondX][secondY].diamondType);
 
-    });
+    };
 
+    
+    /**
+     * 
+     * @returns {undefined}
+     */
+    this.diamondRain = function() {
+        if (this.diamondDrop()) {
+            setTimeout(this.diamondRain, 500);
+
+        }
+    };
+
+
+    /**
+     * 
+     * @returns {Boolean}
+     */
+    this.diamondDrop = function() {
+        var emptyDiamonds = [];
+        for (var j = 0; j < 15; j++) {
+            for (var i = 14; i >= 0; i--) {
+                
+                if (this.elements[i][j].diamondType === null) {
+
+                    var emptyCoordinates = {
+                        x: i,
+                        y: j
+                    };
+                    emptyDiamonds.push(emptyCoordinates);
+                    break;
+                }
+            }
+        }
+
+       // console.log(emptyDiamonds);
+        for (var i = 0; i < emptyDiamonds.length; i++) {
+            var x = emptyDiamonds[i].x;
+            var y = emptyDiamonds[i].y;
+
+            for (var j = 0; j <= x; j++) {
+
+                if (j < x) {
+                    this.elements[x - j][y].diamondType = this.elements[x - j - 1][y].diamondType;
+                    this.assignDiamondToBoardElement(x - j, y, this.elements[x - j][y].diamondType);
+                }
+                else {
+                    var diamondTypeIndex = Math.floor(Math.random() * DiamondsTypes.length);
+                    var diamondType = DiamondsTypes[diamondTypeIndex];
+
+                    this.assignDiamondToBoardElement(0, y, diamondType);
+                }
+            }
+        }
+        
+        console.log(emptyDiamonds.length !== 0);
+        return emptyDiamonds.length !== 0;
+    };
+    
+     /*
+     * funkcja pomocnicza przy zamianie 2ch diamentów lub uzupełnianiu 
+     * usunietych diamentów do nadawania niezbednych obiektowi diament klas
+     */
     this.assignDiamondToBoardElement = function(rowIndex, colIndex, diamondType) {
         var boardElement = this.elements[rowIndex][colIndex];
         boardElement.diamondType = diamondType;
         if (diamondType !== null) {
-            boardElement.htmlElement.removeClass().addClass("board-diamond " + diamondType.cssClass)
+            boardElement.htmlElement.removeClass().addClass("board-cell " + diamondType.cssClass)
                     .text(boardElement.diamondType.type);
         }
         else {
-            boardElement.htmlElement.removeClass().addClass("board-diamond empty")
+            boardElement.htmlElement.removeClass().addClass("board-cell empty")
                     .text("");
         }
     };
-};
+}
+;
