@@ -11,7 +11,9 @@
 }
 
 .clicked {
-    border: solid red;
+    border: 2px solid goldenrod;
+    width: 26px;
+    height: 26px;
 }
 
 .D1{

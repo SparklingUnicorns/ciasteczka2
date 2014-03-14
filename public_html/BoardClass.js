@@ -131,6 +131,7 @@ function BoardClass(params) {
                 }
             }
         }
+//        console.log(combos);
         return combos;
     };
     /*
@@ -151,14 +152,14 @@ function BoardClass(params) {
 
     };
 
-    
+
     /**
      * 
      * @returns {undefined}
      */
     this.diamondRain = function() {
-        if (this.diamondDrop()) {
-            setTimeout(this.diamondRain, 500);
+        if (Game.board.diamondDrop()) {
+            setTimeout(Game.board.diamondRain, 500);
 
         }
     };
@@ -172,7 +173,7 @@ function BoardClass(params) {
         var emptyDiamonds = [];
         for (var j = 0; j < 15; j++) {
             for (var i = 14; i >= 0; i--) {
-                
+
                 if (this.elements[i][j].diamondType === null) {
 
                     var emptyCoordinates = {
@@ -185,7 +186,7 @@ function BoardClass(params) {
             }
         }
 
-       // console.log(emptyDiamonds);
+        // console.log(emptyDiamonds);
         for (var i = 0; i < emptyDiamonds.length; i++) {
             var x = emptyDiamonds[i].x;
             var y = emptyDiamonds[i].y;
@@ -204,12 +205,12 @@ function BoardClass(params) {
                 }
             }
         }
-        
+
         //console.log(emptyDiamonds.length !== 0);
         return emptyDiamonds.length !== 0;
     };
-    
-     /*
+
+    /*
      * funkcja pomocnicza przy zamianie 2ch diamentów lub uzupełnianiu 
      * usunietych diamentów do nadawania niezbednych obiektowi diament klas
      */
@@ -224,6 +225,64 @@ function BoardClass(params) {
             boardElement.htmlElement.removeClass().addClass("board-cell empty")
                     .text("");
         }
+    };
+
+    this.checkForMiniCombo = function(firstX, firstY, secondX, secondY) {
+        var firstType = this.elements[firstX][firstY].diamondType;
+        var secondType = this.elements[secondX][secondY].diamondType;
+
+        return this.checkComboForDoubleCell(secondX, secondY, firstX, firstY);
+    };
+
+
+    this.checkComboForDoubleCell = function(x1, y1, x2, y2) {
+        var temp = this.elements;
+        
+        var firstCell = temp[x1][y1];
+        temp[x1][y1] = temp[x2][y2];
+        temp[x2][y2] = firstCell;
+        
+        type1 = temp[x1][y1].diamondType;
+        type2 = temp[x2][y2].diamondType;
+        
+        if ((type1 === temp[x1 + 1][y1].diamondType &&
+                (type1 === temp[x1 + 2][y1].diamondType ||
+                        type1 === temp[x1 - 1][y1].diamondType))) {
+            return true;
+        }
+        if ((type1 === temp[x1 - 1][y1].diamondType &&
+                type1 === temp[x1 - 2][y1].diamondType)) {
+            return true;
+        }
+        if ((type1 === temp[x1][y1 + 1].diamondType &&
+                (type1 === temp[x1][y1 + 2].diamondType ||
+                        type1 === temp[x1][y1 - 1].diamondType))) {
+            return true;
+        }
+        if ((type1 === temp[x1][y1 - 1].diamondType &&
+                type1 === temp[x1][y1 - 2].diamondType)) {
+            return true;
+        }
+
+        if ((type2 === temp[x2 + 1][y2].diamondType &&
+                (type2 === temp[x2 + 2][y2].diamondType ||
+                        type2 === temp[x2 - 1][y2].diamondType))) {
+            return true;
+        }
+        if ((type2 === temp[x2 - 1][y2].diamondType &&
+                type2 === temp[x2 - 2][y2].diamondType)) {
+            return true;
+        }
+        if ((type2 === temp[x2][y2 + 1].diamondType &&
+                (type2 === temp[x2][y2 + 2].diamondType ||
+                        type2 === temp[x2][y2 - 1].diamondType))) {
+            return true;
+        }
+        if ((type2 === temp[x2][y2 - 1].diamondType &&
+                type2 === temp[x2][y2 - 2].diamondType)) {
+            return true;
+        }
+        return false;
     };
 }
 ;
