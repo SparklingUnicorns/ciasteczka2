@@ -61,27 +61,5 @@ Game.board = new BoardClass({
 });
 Game.board.createMap();
 Game.board.cleaning();
-Game.board.checkForCombos();
+
 Game.init();
-
-$('#change').click(function() {
-    var firstX = $("input[name='firstX']").val();
-    var firstY = $("input[name='firstY']").val();
-
-    var secondX = $("input[name='secondX']").val();
-    var secondY = $("input[name='secondY']").val();
-    Game.board.changeDiamondPlaces(firstX, firstY, secondX, secondY);
-
-});
-
-$('#blowUp').click(function() {
-
-    var list = [];
-    for (var i = 0; i < 15; i++) {
-        list.push({x: i, y: 0});
-    }
-    Game.board.blowUpDiamonds(list);
-});
-$('#rain').click(function() {
-    Game.board.diamondRain();
-});

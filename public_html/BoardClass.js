@@ -173,60 +173,21 @@ function BoardClass(params) {
                 }
             }
         }
-        //console.log(combos);
-        return combos;
-    };
-    
-    
-    this.cleaning = function() {
-        
-    };
-        /*
-     * wyszukiwanie tylko POZIOMYCH grup diamentów (grupa = >2)
-     * @returns {Array|BoardClass.checkForCombos.combos}
-     */
-    this.checkForCombo = function() {
-        var combos = [];
-        for (var i = 0; i < 15; i++) {
-            for (var j = 0; j < 15; j++) {
-                var diamond = this.elements[i][j].diamondType;
-                var check = true;
-                var counter = 1;
-                var coordinates = [];
-                var diamontPoint = {
-                    x: i,
-                    y: j
-                };
-                coordinates.push(diamontPoint);
-                while (check && j + counter < 15) {
-                    var compare = this.elements[i][j + counter].diamondType;
-                    if (diamond === compare) {
-                        diamontPoint = {
-                            x: i,
-                            y: j + counter
-                        };
-                        coordinates.push(diamontPoint);
-                        counter++;
-                    }
-                    else {
-                        check = false;
-                    }
-                }
-                if (counter > 2) {
-                    var diamondCombo = {
-                        diamondType: diamond.type,
-                        diamondCount: counter,
-                        comboCoordinates: coordinates
-                    };
-                    combos.push(diamondCombo);
-                }
 
-                if (counter > 1) {
-                    j += counter - 1;
-                }
-            }
-        }
         return combos;
+    };
+    
+    
+this.cleaning = function() {
+        var combos = Game.board.checkForCombos();
+        var combo = combos[0];
+        if(combo){
+
+            Game.board.blowUpDiamonds(combo.comboCoordinates);
+            Game.board.diamondRain();
+            
+        }
+        console.log(Game.board.checkForCombos());
     };
     
     /*
@@ -255,10 +216,13 @@ function BoardClass(params) {
     this.diamondRain = function() {
         if (Game.board.diamondDrop()) {
             setTimeout(Game.board.diamondRain, 500);
-
+        }
+        else
+        {
+            Game.board.cleaning();
         }
     };
-
+    
 
     /**
      * 
@@ -321,6 +285,7 @@ function BoardClass(params) {
                     .text("");
         }
     };
+    
     this.blowUpDiamonds = function(coordinates) {
     for (var i = 0; i < coordinates.length; i++) {
 
