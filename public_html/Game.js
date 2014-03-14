@@ -60,6 +60,7 @@ Game.board = new BoardClass({
     htmlElement: $("#ciasteczka")
 });
 Game.board.createMap();
+Game.board.cleaning();
 Game.board.checkForCombos();
 Game.init();
 
@@ -79,22 +80,8 @@ $('#blowUp').click(function() {
     for (var i = 0; i < 15; i++) {
         list.push({x: i, y: 0});
     }
-    Game.blowUpDiamonds(list);
+    Game.board.blowUpDiamonds(list);
 });
 $('#rain').click(function() {
     Game.board.diamondRain();
 });
-
-Game.blowUpDiamonds = function(coordinates) {
-    for (var i = 0; i < coordinates.length; i++) {
-
-        var x = coordinates[i].x;
-        var y = coordinates[i].y;
-        Game.board.elements[x][y].diamondType = null;
-        Game.board.elements[x][y].htmlElement.text(" ").removeClass().addClass("board-cell empty");
-    }
-
-};
-
-
-

@@ -124,6 +124,7 @@ function BoardClass(params) {
                         comboCoordinates: coordinates
                     };
                     combos.push(diamondCombo);
+                    return combos;
                 }
 
                 if (counter > 1) {
@@ -131,9 +132,103 @@ function BoardClass(params) {
                 }
             }
         }
-//        console.log(combos);
+        
+        for (var i = 0; i < 15; i++) {
+            for (var j = 0; j < 15; j++) {
+                var diamond = this.elements[i][j].diamondType;
+                var check = true;
+                var counter = 1;
+                var coordinates = [];
+                var diamontPoint = {
+                    x: i,
+                    y: j
+                };
+                coordinates.push(diamontPoint);
+                while (check && i + counter < 15) {
+                    var compare = this.elements[i + counter][j].diamondType;
+                    if (diamond === compare) {
+                        diamontPoint = {
+                            x: i + counter,
+                            y: j
+                        };
+                        coordinates.push(diamontPoint);
+                        counter++;
+                    }
+                    else {
+                        check = false;
+                    }
+                }
+                if (counter > 2) {
+                    var diamondCombo = {
+                        diamondType: diamond.type,
+                        diamondCount: counter,
+                        comboCoordinates: coordinates
+                    };
+                    combos.push(diamondCombo);
+                    return combos;
+                }
+
+                if (counter > 1) {
+                    j += counter - 1;
+                }
+            }
+        }
+        //console.log(combos);
         return combos;
     };
+    
+    
+    this.cleaning = function() {
+        
+    };
+        /*
+     * wyszukiwanie tylko POZIOMYCH grup diamentów (grupa = >2)
+     * @returns {Array|BoardClass.checkForCombos.combos}
+     */
+    this.checkForCombo = function() {
+        var combos = [];
+        for (var i = 0; i < 15; i++) {
+            for (var j = 0; j < 15; j++) {
+                var diamond = this.elements[i][j].diamondType;
+                var check = true;
+                var counter = 1;
+                var coordinates = [];
+                var diamontPoint = {
+                    x: i,
+                    y: j
+                };
+                coordinates.push(diamontPoint);
+                while (check && j + counter < 15) {
+                    var compare = this.elements[i][j + counter].diamondType;
+                    if (diamond === compare) {
+                        diamontPoint = {
+                            x: i,
+                            y: j + counter
+                        };
+                        coordinates.push(diamontPoint);
+                        counter++;
+                    }
+                    else {
+                        check = false;
+                    }
+                }
+                if (counter > 2) {
+                    var diamondCombo = {
+                        diamondType: diamond.type,
+                        diamondCount: counter,
+                        comboCoordinates: coordinates
+                    };
+                    combos.push(diamondCombo);
+                }
+
+                if (counter > 1) {
+                    j += counter - 1;
+                }
+            }
+        }
+        return combos;
+    };
+    
     /*
      * zamiana 2ch diamentów miejscami z zainputowanymi coorinatesami tych diamentów
      * @param {type} firstX
@@ -226,63 +321,17 @@ function BoardClass(params) {
                     .text("");
         }
     };
+    this.blowUpDiamonds = function(coordinates) {
+    for (var i = 0; i < coordinates.length; i++) {
 
-    this.checkForMiniCombo = function(firstX, firstY, secondX, secondY) {
-        var firstType = this.elements[firstX][firstY].diamondType;
-        var secondType = this.elements[secondX][secondY].diamondType;
+        var x = coordinates[i].x;
+        var y = coordinates[i].y;
+        this.elements[x][y].diamondType = null;
+        this.elements[x][y].htmlElement.text(" ").removeClass().addClass("board-cell empty");
+    }
 
-        return this.checkComboForDoubleCell(secondX, secondY, firstX, firstY);
-    };
+};
 
-
-    this.checkComboForDoubleCell = function(x1, y1, x2, y2) {
-        var temp = this.elements;
-        
-        var firstCell = temp[x1][y1];
-        temp[x1][y1] = temp[x2][y2];
-        temp[x2][y2] = firstCell;
-        
-        type1 = temp[x1][y1].diamondType;
-        type2 = temp[x2][y2].diamondType;
-        
-        if ((type1 === temp[x1 + 1][y1].diamondType &&
-                (type1 === temp[x1 + 2][y1].diamondType ||
-                        type1 === temp[x1 - 1][y1].diamondType))) {
-            return true;
-        }
-        if ((type1 === temp[x1 - 1][y1].diamondType &&
-                type1 === temp[x1 - 2][y1].diamondType)) {
-            return true;
-        }
-        if ((type1 === temp[x1][y1 + 1].diamondType &&
-                (type1 === temp[x1][y1 + 2].diamondType ||
-                        type1 === temp[x1][y1 - 1].diamondType))) {
-            return true;
-        }
-        if ((type1 === temp[x1][y1 - 1].diamondType &&
-                type1 === temp[x1][y1 - 2].diamondType)) {
-            return true;
-        }
-
-        if ((type2 === temp[x2 + 1][y2].diamondType &&
-                (type2 === temp[x2 + 2][y2].diamondType ||
-                        type2 === temp[x2 - 1][y2].diamondType))) {
-            return true;
-        }
-        if ((type2 === temp[x2 - 1][y2].diamondType &&
-                type2 === temp[x2 - 2][y2].diamondType)) {
-            return true;
-        }
-        if ((type2 === temp[x2][y2 + 1].diamondType &&
-                (type2 === temp[x2][y2 + 2].diamondType ||
-                        type2 === temp[x2][y2 - 1].diamondType))) {
-            return true;
-        }
-        if ((type2 === temp[x2][y2 - 1].diamondType &&
-                type2 === temp[x2][y2 - 2].diamondType)) {
-            return true;
-        }
-        return false;
-    };
+   
 }
 ;
