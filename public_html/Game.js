@@ -31,6 +31,10 @@ var Game = {
                             || (secondX === firstX + 1 && firstY === secondY)) {
 
                         if (Game.board.checkForMiniCombo(firstX, firstY, secondX, secondY)) {
+                            Game.board.cleaning();
+                            
+                        }
+                        else {
                             Game.board.changeDiamondPlaces(firstX, firstY, secondX, secondY);
                         }
                         $(".clicked").removeClass('clicked');
@@ -61,5 +65,4 @@ Game.board = new BoardClass({
 });
 Game.board.createMap();
 Game.board.cleaning();
-
 Game.init();

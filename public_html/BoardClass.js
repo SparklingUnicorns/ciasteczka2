@@ -132,9 +132,9 @@ function BoardClass(params) {
                 }
             }
         }
-        
-        for (var i = 0; i < 15; i++) {
-            for (var j = 0; j < 15; j++) {
+        for (var j = 0; j < 15; j++) {
+            for (var i = 0; i < 15; i++) {
+
                 var diamond = this.elements[i][j].diamondType;
                 var check = true;
                 var counter = 1;
@@ -169,27 +169,27 @@ function BoardClass(params) {
                 }
 
                 if (counter > 1) {
-                    j += counter - 1;
+                    i += counter - 1;
                 }
             }
         }
 
         return combos;
     };
-    
-    
-this.cleaning = function() {
+
+
+    this.cleaning = function() {
         var combos = Game.board.checkForCombos();
         var combo = combos[0];
-        if(combo){
+        if (combo) {
 
             Game.board.blowUpDiamonds(combo.comboCoordinates);
             Game.board.diamondRain();
-            
+
         }
-        console.log(Game.board.checkForCombos());
+
     };
-    
+
     /*
      * zamiana 2ch diamentów miejscami z zainputowanymi coorinatesami tych diamentów
      * @param {type} firstX
@@ -215,14 +215,15 @@ this.cleaning = function() {
      */
     this.diamondRain = function() {
         if (Game.board.diamondDrop()) {
-            setTimeout(Game.board.diamondRain, 500);
+            setTimeout(Game.board.diamondRain, 50);
+            //Game.board.diamondRain();
         }
         else
         {
             Game.board.cleaning();
         }
     };
-    
+
 
     /**
      * 
@@ -285,18 +286,29 @@ this.cleaning = function() {
                     .text("");
         }
     };
-    
+
     this.blowUpDiamonds = function(coordinates) {
-    for (var i = 0; i < coordinates.length; i++) {
+        for (var i = 0; i < coordinates.length; i++) {
 
-        var x = coordinates[i].x;
-        var y = coordinates[i].y;
-        this.elements[x][y].diamondType = null;
-        this.elements[x][y].htmlElement.text(" ").removeClass().addClass("board-cell empty");
-    }
+            var x = coordinates[i].x;
+            var y = coordinates[i].y;
+            this.elements[x][y].diamondType = null;
+            this.elements[x][y].htmlElement.text(" ").removeClass().addClass("board-cell empty");
+        }
 
-};
+    };
 
-   
+
+    this.checkForMiniCombo = function(firstX, firstY, secondX, secondY) {
+        var tempBoard = this;
+        tempBoard.changeDiamondPlaces(firstX, firstY, secondX, secondY);
+        
+        if(tempBoard.checkForCombos().length){
+            return true;
+        }
+        
+        return false;
+        //console.log(tempBoard);
+    };
 }
 ;
