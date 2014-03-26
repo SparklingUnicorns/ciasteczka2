@@ -177,14 +177,70 @@ function BoardClass(params) {
         return combos;
     };
 
+    this.checkForDoubleCombo = function(coordinates) {
+
+        var checkX1 = coordinates[0].x;
+        var checkX2 = coordinates[1].x;
+
+        var checkY1 = coordinates[0].y;
+        var checkY2 = coordinates[1].y;
+
+        if (checkX1 == checkX2){
+            for (var i = 0; i < coordinates.length; i++) {
+
+                var x = coordinates[i].x;
+                var y = coordinates[i].y;
+                var diamond = this.elements[x][y].diamondType;
+
+                var counter = 1;
+                var theSameType = 1;
+                while (theSameType && ((counter + x)<this.size) && ((counter + x)>0)){
+                    var checkDiamond = this.elements[counter + x][y].diamondType;
+
+                    if (diamond === checkDiamond) {
+                        counter++;
+                    }
+                    else {
+                        theSameType = 0;
+                    }
+                }
+
+            }
+        }
+
+        if (checkY1 == checkY2){
+            for (var i = 0; i < coordinates.length; i++) {
+
+                var x = coordinates[i].x;
+                var y = coordinates[i].y;
+
+
+            }
+        }
+
+
+    };
+
+    this.markCombo = function(combo) {
+        console.log(combo);
+        for (var i in combo.comboCoordinates) {
+            var x = combo.comboCoordinates[i].x;
+            var y = combo.comboCoordinates[i].y;
+            $('#cell_' + x + '_' + y).addClass('marked');
+        }
+    };
 
     this.cleaning = function() {
         var combos = Game.board.checkForCombos();
         var combo = combos[0];
-        if (combo) {
 
-            Game.board.blowUpDiamonds(combo.comboCoordinates);
-            Game.board.diamondRain();
+        if (combo) {
+            Game.board.markCombo(combo);
+            setTimeout(function() {
+                Game.board.blowUpDiamonds(combo.comboCoordinates);
+                Game.board.diamondRain();
+            }, 20);
+
 
         }
 
@@ -302,11 +358,11 @@ function BoardClass(params) {
     this.checkForMiniCombo = function(firstX, firstY, secondX, secondY) {
         var tempBoard = this;
         tempBoard.changeDiamondPlaces(firstX, firstY, secondX, secondY);
-        
-        if(tempBoard.checkForCombos().length){
+
+        if (tempBoard.checkForCombos().length) {
             return true;
         }
-        
+
         return false;
         //console.log(tempBoard);
     };
