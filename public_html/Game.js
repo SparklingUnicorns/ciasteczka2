@@ -32,7 +32,7 @@ var Game = {
 
                         if (Game.board.checkForMiniCombo(firstX, firstY, secondX, secondY)) {
                             Game.board.cleaning();
-                            
+
                         }
                         else {
                             Game.board.changeDiamondPlaces(firstX, firstY, secondX, secondY);
@@ -57,12 +57,19 @@ var Game = {
         });
     }
 };
+////////////////////////////////////////////////////
+Game.mapList = new MapListClass({htmlElementMenu: $("#maps")});
 
+Game.mapList.drow();
+///////////////////////////////////////////////
+Game.playTheGame = function(levelNo) {
 
-Game.board = new BoardClass({
-    size: 15,
-    htmlElement: $("#ciasteczka")
-});
-Game.board.createMap();
-Game.board.cleaning();
-Game.init();
+    Game.board = new BoardClass({
+        size: 9,
+        htmlElement: $("#ciasteczka"),
+        map: Game.mapList.list[levelNo]
+    });
+    Game.board.createMap();
+    Game.board.cleaning();
+    Game.init();
+};

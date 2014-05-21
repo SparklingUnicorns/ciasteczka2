@@ -16,12 +16,6 @@
     height: 26px;
 }
 
-.marked {
-    border: 2px solid yellow;
-    width: 26px;
-    height: 26px;  
-}
-
 .D1{
     background-color: red;
 }
@@ -31,7 +25,7 @@
 }
 
 .D3{
-    background-color: aquamarine;
+    background-color: yellow;
 }
 
 .D4{

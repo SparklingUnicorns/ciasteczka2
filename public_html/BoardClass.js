@@ -4,6 +4,8 @@ function BoardClass(params) {
     this.elements = [];
     this.size = params.size;
     this.htmlElement = params.htmlElement;
+    this.map = params.map;
+    //console.log(this.map);
 
     var Diamond1 = new DiamondClass({
         type: "1",
@@ -67,19 +69,36 @@ function BoardClass(params) {
             var row = [];
 
             for (var j = 0; j < this.size; j++) {
-                var diamondTypeIndex = Math.floor(Math.random() * DiamondsTypes.length);
-                var randomDiamond = DiamondsTypes[diamondTypeIndex];
 
-                var tdHtmlElement = $("<td/>", {
-                    class: "board-cell " + randomDiamond.cssClass,
-                    id: "cell_" + i + "_" + j,
-                    text: randomDiamond.type
-                });
 
-                row.push({
-                    diamondType: randomDiamond,
-                    htmlElement: tdHtmlElement
-                });
+
+                if (this.map.matrix[i][j] === 1) {
+                    var diamondTypeIndex = Math.floor(Math.random() * DiamondsTypes.length);
+                    var randomDiamond = DiamondsTypes[diamondTypeIndex];
+                    var tdHtmlElement = $("<td/>", {
+                        class: "board-cell " + randomDiamond.cssClass,
+                        id: "cell_" + i + "_" + j,
+                        text: randomDiamond.type
+                    });
+                    row.push({
+                        diamondType: randomDiamond,
+                        htmlElement: tdHtmlElement
+                    });
+
+
+                }
+                else {
+                    var tdHtmlElement = $("<td/>", {
+                        class: "board-cell ",
+                        id: "cell_" + i + "_" + j,
+                        text: 'n'
+                    });
+                    row.push({
+                        diamondType: null,
+                        htmlElement: tdHtmlElement
+                    });
+
+                }
                 trHtmlElement.append(tdHtmlElement);
             }
             tableElement.append(trHtmlElement);
@@ -87,13 +106,13 @@ function BoardClass(params) {
         }
     };
     /*
-     * wyszukiwanie tylko POZIOMYCH grup diamentów (grupa = >2)
+     * wyszukiwanie tylko POZIOMYCH grup diament�w (grupa = >2)
      * @returns {Array|BoardClass.checkForCombos.combos}
      */
     this.checkForCombos = function() {
         var combos = [];
-        for (var i = 0; i < 15; i++) {
-            for (var j = 0; j < 15; j++) {
+        for (var i = 0; i < this.size; i++) {
+            for (var j = 0; j < this.size; j++) {
                 var diamond = this.elements[i][j].diamondType;
                 var check = true;
                 var counter = 1;
@@ -103,7 +122,7 @@ function BoardClass(params) {
                     y: j
                 };
                 coordinates.push(diamontPoint);
-                while (check && j + counter < 15) {
+                while (check && j + counter < this.size) {
                     var compare = this.elements[i][j + counter].diamondType;
                     if (diamond === compare) {
                         diamontPoint = {
@@ -132,8 +151,8 @@ function BoardClass(params) {
                 }
             }
         }
-        for (var j = 0; j < 15; j++) {
-            for (var i = 0; i < 15; i++) {
+        for (var j = 0; j < this.size; j++) {
+            for (var i = 0; i < this.size; i++) {
 
                 var diamond = this.elements[i][j].diamondType;
                 var check = true;
@@ -144,7 +163,7 @@ function BoardClass(params) {
                     y: j
                 };
                 coordinates.push(diamontPoint);
-                while (check && i + counter < 15) {
+                while (check && i + counter < this.size) {
                     var compare = this.elements[i + counter][j].diamondType;
                     if (diamond === compare) {
                         diamontPoint = {
@@ -177,83 +196,19 @@ function BoardClass(params) {
         return combos;
     };
 
-    this.checkForDoubleCombo = function(coordinates) {
-
-        var checkX1 = coordinates[0].x;
-        var checkX2 = coordinates[1].x;
-
-        var checkY1 = coordinates[0].y;
-        var checkY2 = coordinates[1].y;
-
-        if (checkX1 == checkX2){
-            for (var i = 0; i < coordinates.length; i++) {
-
-                var x = coordinates[i].x;
-                var y = coordinates[i].y;
-                var diamond = this.elements[x][y].diamondType;
-
-                var counter = 1;
-                var theSameType = 1;
-                while (theSameType && ((counter + x)<this.size) && ((counter + x)>0)){
-                    var checkDiamond = this.elements[counter + x][y].diamondType;
-
-                    if (diamond === checkDiamond) {
-                        counter++;
-                    }
-                    else {
-                        theSameType = 0;
-                    }
-                }
-
-            }
-        }
-
-        if (checkY1 == checkY2){
-            for (var i = 0; i < coordinates.length; i++) {
-
-                var x = coordinates[i].x;
-                var y = coordinates[i].y;
-
-
-            }
-        }
-
-
-    };
-
-    this.markCombo = function(combo) {
-        console.log(combo);
-        for (var i in combo.comboCoordinates) {
-            var x = combo.comboCoordinates[i].x;
-            var y = combo.comboCoordinates[i].y;
-            $('#cell_' + x + '_' + y).addClass('marked');
-        }
-    };
 
     this.cleaning = function() {
         var combos = Game.board.checkForCombos();
         var combo = combos[0];
-
         if (combo) {
-            Game.board.markCombo(combo);
-            setTimeout(function() {
-                Game.board.blowUpDiamonds(combo.comboCoordinates);
-                Game.board.diamondRain();
-            }, 20);
 
+            Game.board.blowUpDiamonds(combo.comboCoordinates);
+            Game.board.diamondRain();
 
         }
 
     };
 
-    /*
-     * zamiana 2ch diamentów miejscami z zainputowanymi coorinatesami tych diamentów
-     * @param {type} firstX
-     * @param {type} firstY
-     * @param {type} secondX
-     * @param {type} secondY
-     * @returns {undefined}
-     */
     this.changeDiamondPlaces = function(firstX, firstY, secondX, secondY) {
 
         var temp = this.elements[firstX][firstY].diamondType;
@@ -287,8 +242,8 @@ function BoardClass(params) {
      */
     this.diamondDrop = function() {
         var emptyDiamonds = [];
-        for (var j = 0; j < 15; j++) {
-            for (var i = 14; i >= 0; i--) {
+        for (var j = 0; j < this.size; j++) {
+            for (var i = this.size - 1; i >= 0; i--) {
 
                 if (this.elements[i][j].diamondType === null) {
 
@@ -326,10 +281,6 @@ function BoardClass(params) {
         return emptyDiamonds.length !== 0;
     };
 
-    /*
-     * funkcja pomocnicza przy zamianie 2ch diamentów lub uzupełnianiu 
-     * usunietych diamentów do nadawania niezbednych obiektowi diament klas
-     */
     this.assignDiamondToBoardElement = function(rowIndex, colIndex, diamondType) {
         var boardElement = this.elements[rowIndex][colIndex];
         boardElement.diamondType = diamondType;
