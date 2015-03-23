@@ -58,9 +58,18 @@ var Game = {
     }
 };
 ////////////////////////////////////////////////////
-Game.mapList = new MapListClass({htmlElementMenu: $("#maps")});
+//Game.mapList = new MapListClass({htmlElementMenu: $("#maps")});
 
-Game.mapList.drow();
+//Game.mapList.drow();
+
+Game.board = new BoardClass({
+    size: 15,
+    htmlElement: $("#ciasteczka")
+});
+Game.board.createMap();
+Game.board.cleaning();
+
+Game.init();
 ///////////////////////////////////////////////
 Game.playTheGame = function(levelNo) {
 

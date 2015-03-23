@@ -70,9 +70,7 @@ function BoardClass(params) {
 
             for (var j = 0; j < this.size; j++) {
 
-
-
-                if (this.map.matrix[i][j] === 1) {
+               // if (this.map.matrix[i][j] === 1) {
                     var diamondTypeIndex = Math.floor(Math.random() * DiamondsTypes.length);
                     var randomDiamond = DiamondsTypes[diamondTypeIndex];
                     var tdHtmlElement = $("<td/>", {
@@ -84,21 +82,19 @@ function BoardClass(params) {
                         diamondType: randomDiamond,
                         htmlElement: tdHtmlElement
                     });
+//                }
+//                else {
+//                    var tdHtmlElement = $("<td/>", {
+//                        class: "board-cell ",
+//                        id: "cell_" + i + "_" + j,
+//                        text: 'n'
+//                    });
+//                    row.push({
+//                        diamondType: null,
+//                        htmlElement: tdHtmlElement
+//                    });
 
-
-                }
-                else {
-                    var tdHtmlElement = $("<td/>", {
-                        class: "board-cell ",
-                        id: "cell_" + i + "_" + j,
-                        text: 'n'
-                    });
-                    row.push({
-                        diamondType: null,
-                        htmlElement: tdHtmlElement
-                    });
-
-                }
+//                }
                 trHtmlElement.append(tdHtmlElement);
             }
             tableElement.append(trHtmlElement);
